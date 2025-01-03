@@ -1,0 +1,292 @@
+/* General Styles */
+html,
+body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    color: #333;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: white;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+/* Header */
+.header {
+    background: #004080;
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Active Navigation Link */
+.nav a.active {
+    font-weight: bold;
+    border-bottom: 2px solid #ff4500;
+}
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+.nav ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+.nav li {
+    margin: 0 15px;
+}
+
+.nav a {
+    border-radius: 11px;
+    padding: 7px;
+    margin: 17px;
+}
+
+.nav a:hover {
+    background-color: #0066cc;
+}
+
+
+/* Footer */
+.container {
+    text-align: center;
+    padding: 10px 0;
+    background: #004080;
+    color: white;
+}
+
+/* Общ стил за flash съобщения */
+.flashes {
+    margin: 20px auto;
+    max-width: 800px;
+    padding: 0 20px;
+}
+
+.flash {
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Успешно съобщение */
+.flash-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+/* Съобщение за грешка */
+.flash-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Информационно съобщение */
+.flash-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+/* Предупредително съобщение */
+.flash-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+}
+
+
+/* Основна контейнерна част */
+.products-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* Стили за всяка кутийка */
+.product-card {
+    width: 300px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    text-align: center;
+    padding: 10px;
+    transition: transform 0.3s;
+}
+
+.product-card:hover {
+    transform: scale(1.05);
+}
+
+/* Изображението */
+.product-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Име на продукта */
+.product-card h3 {
+    font-size: 1.2em;
+    margin: 10px 0;
+}
+
+/* Описание на продукта */
+.product-card .description {
+    font-size: 0.9em;
+    color: #555;
+    margin: 10px 0;
+}
+
+/* Цена */
+.product-card .price {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #007BFF;
+    margin: 10px 0;
+}
+
+/* Бутон "Add to Cart" */
+.product-card .add-to-cart {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.product-card .add-to-cart:hover {
+    background-color: #0056b3;
+}
+
+.logout-button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+}
+
+.logout-button:hover {
+    color: #0056b3;
+    text-decoration: none;
+}
+
+.footer {
+    background-color: #004080;
+    color: #fff;
+    padding: 40px 0;
+    text-align: center;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-left,
+.footer-middle,
+.footer-right {
+    width: 30%;
+}
+
+.footer-left h3,
+.footer-middle h3,
+.footer-right h3 {
+    font-size: 1.2em;
+    color: #0066cc;
+}
+
+.footer-left p,
+.footer-right ul {
+    font-size: 0.9em;
+    margin: 10px 0;
+}
+
+.footer-right ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-right ul li {
+    margin: 5px 0;
+}
+
+.footer-right ul li a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.footer-right ul li a:hover {
+    color: #007bff;
+}
+
+.social-icons {
+    display: flex;
+    justify-content: space-around;
+}
+
+.social-icons a {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+}
+
+.social-icons img {
+    width: 100%;
+    height: 100%;
+    filter: invert(100%);
+    /* Make icons white */
+}
+
+.social-icons a:hover img {
+    filter: invert(50%) sepia(100%) saturate(1000%) hue-rotate(180deg);
+    /* Hover effect to change color slightly */
+}
+
+.footer-bottom {
+    margin-top: 20px;
+    font-size: 0.9em;
+    color: #ccc;
+}

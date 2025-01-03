@@ -1,0 +1,247 @@
+{% extends "base.html" %}
+
+{% block title %}Categories in {{ department.name }}{% endblock %}
+
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/categories.css') }}">
+<h1 id="headline">Categories in {{ department.name }}</h1>
+<nav class="categories-menu">
+    <ul>
+        {% for category in categories %}
+        <li>
+            <a href="#" class="category-link" data-category-id="{{ category.id }}" id="{{ category.id }}">
+                {{ category.name }}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+</nav>
+
+<div id="products-container" class="productsFlex">
+    <div id="product-cards" class="productCards">
+    </div>
+</div>
+
+<style>
+    /* Optional styles for better visuals */
+    .productsFlex {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .product-card {
+        position: relative;
+        width: 300px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        text-align: center;
+        padding: 10px;
+        transition: transform 0.3s;
+        background-color: #fff;
+    }
+
+    .product-card.recommended::before {
+        content: 'TOP PICKS!';
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 48px;
+        height: 48px;
+        background-color: red;
+        color: white;
+        border-radius: 50%;
+        font-size: 10px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        font-weight: bold;
+    }
+
+    .product-card:hover {
+        transform: scale(1.05);
+    }
+
+    .product-card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .product-card h3 {
+        font-size: 1.2em;
+        margin: 10px 0;
+    }
+
+    .product-card .description {
+        font-size: 0.9em;
+        color: #555;
+        margin: 10px 0;
+    }
+
+    .product-card .price {
+        font-size: 1.1em;
+        font-weight: bold;
+        color: #007BFF;
+        margin: 10px 0;
+    }
+
+    .product-card .add-to-cart {
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .product-card .add-to-cart:hover {
+        background-color: #0056b3;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Добавяне на слушател за всеки бутон "Add to Cart"
+        function attachAddToCartListeners() {
+            const addToCartButtons = document.querySelectorAll(".add-to-cart");
+
+            addToCartButtons.forEach(button => {
+                button.addEventListener("click", function () {
+                    const productId = this.dataset.productId;
+
+                    fetch('/api/cart/add', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ product_id: productId })
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! Status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            Swal.fire({
+                                title: 'Success!',
+                                text: data.message || 'Product added to cart!',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            });
+                        })
+                        .catch(error => {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'Error adding product to cart. Please try again.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        });
+                });
+            });
+        }
+
+        // Функция за зареждане на продукти
+        function loadProducts(categoryId, linkElement = null) {
+            const productsContainer = document.getElementById("product-cards");
+            const categoryLinks = document.querySelectorAll(".category-link");
+
+            // Премахваме "active" клас от всички линкове
+            categoryLinks.forEach(link => link.classList.remove("active"));
+
+            // Добавяме "active" клас към текущия линк
+            if (linkElement) {
+                linkElement.classList.add("active");
+            }
+
+
+
+            const categoryImages = {
+                "Outdoor": '/static/images/outdoor.jpg',
+                "Indoor": '/static/images/indoor.jpg',
+                "Adrenaline": '/static/images/adrenaline.jpg',
+                "Children's Birthday Party": '/static/images/children.jpeg',
+                "Bachelorette Party": '/static/images/bachelorette.jpg',
+                "Company Party": '/static/images/company.jpg',
+                "Bachelor Party": '/static/images/Bachelor.jpg',
+                "Family Gatherings": '/static/images/family.jpg',
+                "Anniversary Celebration ": '/static/images/anniversary.jpg',
+                "Romantic Dinner": '/static/images/dinner.jpg',
+                "Private Tour": '/static/images/tour.jpg',
+                "Conferences": '/static/images/conference.jpg',
+                "Workshops": '/static/images/workshop.jpg',
+                "Team-Building Retreats": '/static/images/retreat.jpg',
+                "Product Launches": '/static/images/launch.jpg',
+            };
+
+
+            fetch(`/api/categories/${categoryId}/products`)
+                .then(response => response.json())
+                .then(data => {
+                    productsContainer.innerHTML = "";
+
+                    if (data.length === 0) {
+                        productsContainer.innerHTML = "<p>No products found in this category.</p>";
+                    } else {
+                        data.sort((a, b) => (b.recommended ?? 0) - (a.recommended ?? 0))
+                        data.forEach(product => {
+                            const productCard = document.createElement("div");
+                            productCard.className = "product-card";
+                            if (product.recommended) {
+                                productCard.classList.add('recommended')
+                            }
+
+                            productCard.innerHTML = `
+                                <img src="${product.image_url || Object.values(categoryImages)[categoryId - 1] || '/static/images/default.jpg'}" alt="${product.name}">
+                                <h3>${product.name}</h3>
+                                <p class="description">${product.description}</p>
+                                <p class="price">$${product.price}</p>
+                                <button class="add-to-cart" data-product-id="${product.id}">Add to Cart</button>
+                            `;
+                            productsContainer.appendChild(productCard);
+                        });
+
+                        attachAddToCartListeners(); // Прилагаме слушатели към новите бутони
+                    }
+                })
+                .catch(error => {
+                    console.error("Error loading products:", error);
+                    productsContainer.innerHTML = "<p>Error loading products. Please try again later.</p>";
+                });
+        }
+
+        // Слушатели за категориите
+        const categoryLinks = document.querySelectorAll(".category-link");
+        categoryLinks.forEach(link => {
+            link.addEventListener("click", function (event) {
+                event.preventDefault();
+                const categoryId = this.dataset.categoryId;
+                loadProducts(categoryId, this); // Зареждаме продукти за кликнатата категория
+            });
+        });
+
+        // Автоматично зареждане на първата категория при зареждане на страницата
+        if (categoryLinks.length > 0) {
+            const firstCategoryLink = categoryLinks[0];
+            const firstCategoryId = firstCategoryLink.dataset.categoryId;
+
+            // Добавяне на "active" към първата категория
+            firstCategoryLink.classList.add("active");
+
+            loadProducts(firstCategoryId, firstCategoryLink);
+        }
+    });
+</script>
+
+
+{% endblock %}

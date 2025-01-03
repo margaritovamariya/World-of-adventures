@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login_register.css') }}">
+<div id="form-container">
+    <div id="img_bnr">
+        <img src="../static/images/ordinary.png" alt="Escape the ordinary">
+    </div>
+
+    <div id="forms-wrapper">
+        <!-- Login Form -->
+        <div id="login-form" class="form-section active">
+            <h1>Login</h1>
+            <form action="/auth/login" method="POST">
+                <div class="form-group">
+                    <label for="email">Email address</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn-small">Sign In</button>
+            </form>
+            <p>Don't have an account? <a href="#" id="show-register-form">Sign up here</a></p>
+        </div>
+
+        <!-- Register Form -->
+        <div id="register-form" class="form-section hidden">
+            <h1>Register</h1>
+            <form action="/auth/register" method="POST">
+                <div class="form-group">
+                    <label for="register-email">Email address</label>
+                    <input type="email" id="register-email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Password</label>
+                    <input type="password" id="register-password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">Confirm Password</label>
+                    <input type="password" id="confirm-password" name="confirm_password" required>
+                </div>
+                <button type="submit" class="btn-small">Register</button>
+            </form>
+            <p>Already have an account? <a href="#" id="show-login-form">Sign in here</a></p>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    document.getElementById('show-register-form').addEventListener('click', function () {
+        document.getElementById('login-form').classList.remove('active');
+        document.getElementById('login-form').classList.add('hidden');
+
+        document.getElementById('register-form').classList.remove('hidden');
+        document.getElementById('register-form').classList.add('active');
+
+        document.getElementById('img_bnr').style.order = '1';
+        document.getElementById('forms-wrapper').style.order = '2';
+    });
+
+    document.getElementById('show-login-form').addEventListener('click', function () {
+        document.getElementById('register-form').classList.remove('active');
+        document.getElementById('register-form').classList.add('hidden');
+
+        document.getElementById('login-form').classList.remove('hidden');
+        document.getElementById('login-form').classList.add('active');
+
+        document.getElementById('img_bnr').style.order = '2';
+        document.getElementById('forms-wrapper').style.order = '1';
+    });
+
+
+</script>
+
+{% endblock %}

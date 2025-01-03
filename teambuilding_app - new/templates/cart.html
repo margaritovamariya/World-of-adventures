@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+
+{% block title %}Your Cart{% endblock %}
+
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<h1 id="headline">Your Cart</h1>
+<div id="cart-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody id="cart-items">
+            <!-- Тук ще зареждаме продуктите с JavaScript -->
+        </tbody>
+    </table>
+    <div id="cart-summary">
+        <p id="total-price">Total: $0</p>
+        {% if has_token %}
+        <button id="checkout">Checkout</button>
+        {% else %}
+        <div id="row">
+            <p id="message">Please sign in to complete your purchase!</p>
+            <a class="nav-cart" href="{{ url_for('auth.login') }}">Sign In</a>
+        </div>
+
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        // Функция за зареждане на количката
+        function loadCart() {
+            fetch('/api/cart')
+                .then(response => response.json())
+                .then(data => {
+                    const cartItems = document.getElementById("cart-items");
+                    const totalPriceElement = document.getElementById("total-price");
+                    let total = 0;
+
+                    // Рендиране на продуктите в количката
+                    cartItems.innerHTML = data.map(item => {
+                        const itemTotal = item.price * item.quantity;
+                        total += itemTotal;
+                        return `
+                            <tr>
+                        
+                                <td>${item.name}
+                                    <img src="${item.image_url || '/static/images/default.jpg'}" alt="${item.name}" width="50">
+                                </td>
+                                <td>$${item.price}</td>
+                                <td>
+                                    <button class="decrease-quantity" data-product-id="${item.product_id}">-</button>
+                                    ${item.quantity}
+                                    <button class="increase-quantity" data-product-id="${item.product_id}">+</button>
+                                </td>
+                                <td>$${itemTotal.toFixed(2)}</td>
+                                <td>
+                                    <button class="remove-from-cart" data-product-id="${item.product_id}">
+                                        Remove
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    }).join("");
+
+                    totalPriceElement.textContent = `Total: $${total.toFixed(2)}`;
+
+                    // Добавяме слушатели за бутоните
+                    addEventListeners();
+                })
+                .catch(error => {
+                    console.error("Error loading cart:", error);
+                });
+        }
+
+        // Функция за добавяне на слушатели към бутоните
+        function addEventListeners() {
+            // Слушатели за бутоните за изтриване
+            document.querySelectorAll('.remove-from-cart').forEach(button => {
+                button.addEventListener('click', function () {
+                    const productId = this.getAttribute('data-product-id');
+                    if (!productId) {
+                        alert("Product ID is missing.");
+                        return;
+                    }
+
+                    fetch(`/api/cart/${productId}`, {
+                        method: 'DELETE',
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`Failed to remove product. Status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            Swal.fire({
+                                title: 'Removed!',
+                                text: data.message || 'Product removed from cart!',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                location.reload(); // Презарежда страницата след известието
+                            });
+                        })
+                        .catch(error => {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'Error removing product from cart. Please try again.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        });
+                });
+            });
+
+            // Слушатели за увеличаване на количеството
+            document.querySelectorAll('.increase-quantity').forEach(button => {
+                button.addEventListener('click', function () {
+                    const productId = this.getAttribute('data-product-id');
+                    fetch(`/api/cart/${productId}/increase`, {
+                        method: 'POST',
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            //alert(data.message || "Quantity increased");
+                            loadCart(); // Презарежда количката
+                            location.reload();
+                        })
+                        .catch(error => {
+                            console.error("Error increasing quantity:", error);
+                        });
+                });
+            });
+
+            // Слушатели за намаляване на количеството
+            document.querySelectorAll('.decrease-quantity').forEach(button => {
+                button.addEventListener('click', function () {
+                    const productId = this.getAttribute('data-product-id');
+                    fetch(`/api/cart/${productId}/decrease`, {
+                        method: 'POST',
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            //alert(data.message || "Quantity decreased");
+                            loadCart(); // Презарежда количката
+                            location.reload();
+                        })
+                        .catch(error => {
+                            console.error("Error decreasing quantity:", error);
+                        });
+                });
+            });
+        }
+
+        // Зареждане на количката при стартиране
+        loadCart();
+
+        // Слушател за Checkout
+        const checkoutButton = document.getElementById("checkout");
+        checkoutButton.addEventListener("click", function () {
+            fetch('/api/create-checkout-session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.url) {
+                        window.location.href = data.url; // Пренасочва към Stripe Checkout
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: data.error || 'Failed to initiate checkout session.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                })
+                .catch(error => {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'An error occurred. Please try again.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                });
+        });
+    });
+</script>
+
+
+<style>
+    #cart-container {
+        margin: 0 24px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    #row {
+        display: flex;
+        justify-content: end;
+        gap: 30px;
+    }
+
+
+    th,
+    td {
+        padding: 10px;
+        text-align: left;
+        border: 1px solid #ddd;
+    }
+
+    #cart-summary {
+        margin-top: 20px;
+        text-align: right;
+    }
+
+    .nav-cart {
+        margin-bottom: 15px;
+        background-color: #007BFF;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    #checkout {
+        margin-bottom: 15px;
+        background-color: #28a745;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    #checkout:hover {
+        background-color: #218838;
+    }
+
+    #message {
+        color: #DD571C;
+    }
+</style>
+{% endblock %}

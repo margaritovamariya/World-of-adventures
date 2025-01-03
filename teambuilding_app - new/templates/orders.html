@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}Your Orders{% endblock %}
+
+{% block content %}
+<h1 class="thank-you-title">
+    <span class="thank-you">Thank you for your purchases, {{ user_email }} !</span>
+    <span>Your orders history.</span>
+</h1>
+<div class="orders-container">
+
+    {% if orders %}
+    {% for order in orders %}
+    <div class="order-card">
+        <div class="order-header">
+            <h2 class="order-id">Order ID: {{ order.id }}</h2>
+            <p><strong>Date:</strong> {{ order.created_at }}</p>
+            <p><strong>Status:</strong> <span class="status">{{ order.status }}</span></p>
+            <p><strong>Total Price:</strong> <span class="total-price">${{ order.total_price }}</span></p>
+        </div>
+
+        <h3>Items:</h3>
+        <table class="order-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                {% if item.order_id == order.id %}
+                <tr>
+                    <td>{{ item.product_name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>${{ item.price }}</td>
+                    <td>${{ item.total }}</td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endfor %}
+    {% else %}
+    <p>No orders found.</p>
+    {% endif %}
+</div>
+
+
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+        margin: 0;
+        padding: 0;
+    }
+
+    .thank-you-title {
+        text-align: center;
+        font-size: 2em;
+        /* Увеличаваме шрифта */
+        color: #007bff;
+        /* Синьо за заглавието */
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .thank-you-title .thank-you {
+        font-size: 1em;
+        color: #333;
+        /* Тъмен цвят за частта с благодарността */
+        font-weight: normal;
+    }
+
+    .thank-you-title span {
+        display: block;
+    }
+
+
+
+    .orders-container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        text-align: center;
+        color: #333;
+    }
+
+    .order-card {
+        display: flex;
+
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+        background-color: #ffffff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .order-header {
+        border-bottom: 2px solid #f1f1f1;
+        padding-bottom: 15px;
+        margin-bottom: 15px;
+    }
+
+    .order-id {
+
+        /* Light blue */
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .order-card .status {
+        font-weight: bold;
+        color: green;
+    }
+
+    .order-card .total-price {
+        font-weight: bold;
+        color: #dc3545;
+    }
+
+    .order-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    .order-table th,
+    .order-table td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .order-table th {
+        background-color: #f8f9fa;
+        font-weight: bold;
+    }
+
+    .order-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    .order-table tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    p {
+        margin: 5px 0;
+    }
+</style>
+
+{% endblock %}

@@ -1,0 +1,142 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    color: #333;
+}
+
+a {
+    text-decoration: none;
+    color: #fff;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+/* Header */
+.header {
+    background: #004080;
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+/* Active Navigation Link */
+.nav a.active {
+    font-weight: bold;
+    border-bottom: 2px solid #ff4500;
+}
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+.nav ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+.nav li {
+    margin: 0 15px;
+}
+
+.nav a{
+    border-radius: 11px;
+    padding: 7px;
+    margin: 17px;
+}
+.nav a:hover {
+    background-color:#0066cc;
+}
+
+/* Banner */
+.banner {
+    background: url('../images/Banner.png') no-repeat center center/cover;
+    height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+}
+
+.banner h1 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+
+.cta-button {
+    background: #004aad;
+    color: white;
+    font-size: 18px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+}
+
+.cta-button:hover {
+    background: #ff5714;
+}
+
+
+/* Categories */
+.categories {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    background: #f9f9f9;
+   
+}
+
+.category {
+    background: white;
+    padding: 15px;
+    text-align: center;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.category img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.category h2 {
+    font-size: 1.5em;
+    margin: 15px 0;
+}
+
+.category p {
+    margin-bottom: 15px;
+}
+
+.category-button {
+    background: #004080;
+    color: white;
+    font-size: 16px;
+}
+
+.category-button:hover {
+    background: #0066cc;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    padding: 10px 0;
+    background: #004080;
+    color: white;
+}
